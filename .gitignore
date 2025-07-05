@@ -1,0 +1,36 @@
+**/node_modules/
+**/dist/
+
+.env
+client/.env.local
+client/.env.development
+client/.env.production
+server/.env
+
+client/.next/
+
+.DS_Store
+Thumbs.db
+
+.vscode/
+
+client/node_modules/
+server/node_modules/
+client/dist/
+server/dist/
+client/.env
+server/.env
+client/.next/
+node_modules
+
+# Documentation and presentation files (not for repository)
+Authentication_Interview_Presentation.md
+Authentication_Interview_Presentation.pdf
+Authentication_Interview_Presentation.docx
+*.pdf
+*.docx
+
+# Other documentation you might create
+presentation/
+docs/interview/
+*.pptx

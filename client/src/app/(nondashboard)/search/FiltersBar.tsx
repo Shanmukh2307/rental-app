@@ -6,7 +6,7 @@ import {
 } from "@/state";
 import { useAppSelector } from "@/state/redux";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { debounce } from "lodash";
 import { cleanParams, cn, formatPriceValue } from "@/lib/utils";
@@ -32,6 +32,11 @@ const FiltersBar = () => {
   );
   const viewMode = useAppSelector((state) => state.global.viewMode);
   const [searchInput, setSearchInput] = useState(filters.location);
+
+  // Sync searchInput with global filters.location when it changes (e.g., from FiltersFull reset)
+  useEffect(() => {
+    setSearchInput(filters.location);
+  }, [filters.location]);
 
   const updateURL = debounce((newFilters: FiltersState) => {
     const cleanFilters = cleanParams(newFilters);
@@ -61,8 +66,6 @@ const FiltersBar = () => {
         currentArrayRange[index] = value === "any" ? null : Number(value);
       }
       newValue = currentArrayRange;
-    } else if (key === "coordinates") {
-      newValue = value === "any" ? [0, 0] : value.map(Number);
     } else {
       newValue = value === "any" ? "any" : value;
     }
@@ -84,15 +87,35 @@ const FiltersBar = () => {
       const data = await response.json();
       if (data.features && data.features.length > 0) {
         const [lng, lat] = data.features[0].center;
-        dispatch(
-          setFilters({
-            location: searchInput,
-            coordinates: [lng, lat],
-          })
-        );
+        const locationName = data.features[0].place_name || searchInput;
+        const newFilters = {
+          ...filters,
+          location: locationName,
+          coordinates: [lng, lat] as [number, number],
+        };
+        dispatch(setFilters(newFilters));
+        updateURL(newFilters);
+        setSearchInput(locationName); // Update the input to show the geocoded location name
+      } else {
+        // No results found - keep the search input but don't apply geographic filter
+        const newFilters = {
+          ...filters,
+          location: searchInput,
+          coordinates: [null, null] as [null, null],
+        };
+        dispatch(setFilters(newFilters));
+        updateURL(newFilters);
       }
     } catch (err) {
       console.error("Error search location:", err);
+      // On error - keep the search input but don't apply geographic filter
+      const newFilters = {
+        ...filters,
+        location: searchInput,
+        coordinates: [null, null] as [null, null],
+      };
+      dispatch(setFilters(newFilters));
+      updateURL(newFilters);
     }
   };
 
@@ -146,9 +169,9 @@ const FiltersBar = () => {
             </SelectTrigger>
             <SelectContent className="bg-white">
               <SelectItem value="any">Any Min Price</SelectItem>
-              {[500, 1000, 1500, 2000, 3000, 5000, 10000].map((price) => (
+              {[28000, 30000, 35000, 40000, 45000, 50000, 55000, 60000, 65000, 70000, 75000, 80000].map((price) => (
                 <SelectItem key={price} value={price.toString()}>
-                  ${price / 1000}k+
+                  ₹{price / 1000}k+
                 </SelectItem>
               ))}
             </SelectContent>
@@ -168,9 +191,9 @@ const FiltersBar = () => {
             </SelectTrigger>
             <SelectContent className="bg-white">
               <SelectItem value="any">Any Max Price</SelectItem>
-              {[1000, 2000, 3000, 5000, 10000].map((price) => (
+              {[35000, 40000, 45000, 50000, 55000, 60000, 65000, 70000, 75000, 80000, 85000].map((price) => (
                 <SelectItem key={price} value={price.toString()}>
-                  &lt;${price / 1000}k
+                  ₹{price / 1000}k
                 </SelectItem>
               ))}
             </SelectContent>

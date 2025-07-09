@@ -90,11 +90,11 @@ export const api = createApi({
           propertyType: filters.propertyType,
           squareFeetMin: filters.squareFeet?.[0],
           squareFeetMax: filters.squareFeet?.[1],
-          amenities: filters.amenities?.join(","),
+          amenities: Array.isArray(filters.amenities) ? filters.amenities.join(",") : "",
           availableFrom: filters.availableFrom,
           favoriteIds: filters.favoriteIds?.join(","),
-          latitude: filters.coordinates?.[1],
-          longitude: filters.coordinates?.[0],
+          latitude: filters.coordinates?.[1] || null,
+          longitude: filters.coordinates?.[0] || null,
         });
 
         return { url: "properties", params };

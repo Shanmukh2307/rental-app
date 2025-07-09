@@ -110,25 +110,56 @@ export const PropertyTypeIcons: Record<PropertyTypeEnum, LucideIcon> = {
   Cottage: Trees,
 };
 
-// Add this constant at the end of the file
+// City data for map display
+export const CITIES = [
+  {
+    id: "mumbai",
+    name: "Mumbai",
+    coordinates: [72.8777, 19.0760],
+    zoom: 11,
+  },
+  {
+    id: "delhi",
+    name: "Delhi",
+    coordinates: [77.2090, 28.6139],
+    zoom: 11,
+  },
+  {
+    id: "bangalore",
+    name: "Bangalore",
+    coordinates: [77.5946, 12.9716],
+    zoom: 11,
+  },
+  {
+    id: "chennai",
+    name: "Chennai",
+    coordinates: [80.2707, 13.0827],
+    zoom: 11,
+  },
+];
+
+// Default map view showing all of India
+export const DEFAULT_MAP_CENTER = [77.0, 20.0]; // Center of India
+export const DEFAULT_MAP_ZOOM = 5;
+
 export const NAVBAR_HEIGHT = 52; // in pixels
 
 // Test users for development
 export const testUsers = {
   tenant: {
-    username: "Carol White",
-    userId: "us-east-2:76543210-90ab-cdef-1234-567890abcdef",
+    username: "Arjun Sharma",
+    userId: "817b3540-a061-707b-742a-a28391181149",
     signInDetails: {
-      loginId: "carol.white@example.com",
+      loginId: "arjun.sharma@gmail.com",
       authFlowType: "USER_SRP_AUTH",
     },
   },
   tenantRole: "tenant",
   manager: {
-    username: "John Smith",
-    userId: "us-east-2:12345678-90ab-cdef-1234-567890abcdef",
+    username: "Rajesh Sharma",
+    userId: "010be580-60a1-70ae-780e-18a6fd94ad32",
     signInDetails: {
-      loginId: "john.smith@example.com",
+      loginId: "rajesh.sharma@propertyhub.in",
       authFlowType: "USER_SRP_AUTH",
     },
   },

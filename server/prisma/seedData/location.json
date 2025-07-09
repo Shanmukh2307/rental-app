@@ -1,92 +1,182 @@
 [
   {
     "id": 1,
-    "country": "United States",
-    "city": "Pasadena",
-    "state": "CA",
-    "address": "123 Colorado Blvd",
-    "postalCode": "91105",
-    "coordinates": "POINT(-118.144516 34.147785)"
+    "country": "India",
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "address": "A-201, Bandra West, Near Linking Road",
+    "postalCode": "400050",
+    "coordinates": "POINT(72.829168 19.059980)"
   },
   {
     "id": 2,
-    "country": "United States",
-    "city": "Santa Monica",
-    "state": "CA",
-    "address": "456 Ocean Ave",
-    "postalCode": "90401",
-    "coordinates": "POINT(-118.496513 34.013654)"
+    "country": "India",
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "address": "Tower B, Andheri East, Near Metro Station",
+    "postalCode": "400069",
+    "coordinates": "POINT(72.868225 19.114370)"
   },
   {
     "id": 3,
-    "country": "United States",
-    "city": "Burbank",
-    "state": "CA",
-    "address": "789 Hollywood Way",
-    "postalCode": "91505",
-    "coordinates": "POINT(-118.328661 34.180839)"
+    "country": "India",
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "address": "C-304, Powai, Near Hiranandani Gardens",
+    "postalCode": "400076",
+    "coordinates": "POINT(72.912262 19.117618)"
   },
   {
     "id": 4,
-    "country": "United States",
-    "city": "Long Beach",
-    "state": "CA",
-    "address": "101 Pine Ave",
-    "postalCode": "90802",
-    "coordinates": "POINT(-118.192604 33.766720)"
+    "country": "India",
+    "city": "Delhi",
+    "state": "Delhi",
+    "address": "12/34, Connaught Place, Central Delhi",
+    "postalCode": "110001",
+    "coordinates": "POINT(77.220080 28.628120)"
   },
   {
     "id": 5,
-    "country": "United States",
-    "city": "New York",
-    "state": "NY",
-    "address": "555 Manhattan Ave",
-    "postalCode": "10001",
-    "coordinates": "POINT(-74.005941 40.712784)"
+    "country": "India",
+    "city": "Delhi",
+    "state": "Delhi",
+    "address": "B-45, Karol Bagh, Near Metro Station",
+    "postalCode": "110005",
+    "coordinates": "POINT(77.190807 28.644806)"
   },
   {
     "id": 6,
-    "country": "United States",
-    "city": "Malibu",
-    "state": "CA",
-    "address": "888 Malibu Road",
-    "postalCode": "90265",
-    "coordinates": "POINT(-118.774518 34.025922)"
+    "country": "India",
+    "city": "Delhi",
+    "state": "Delhi",
+    "address": "F-23, Lajpat Nagar, South Delhi",
+    "postalCode": "110024",
+    "coordinates": "POINT(77.243084 28.568384)"
   },
   {
     "id": 7,
-    "country": "United States",
-    "city": "Glendale",
-    "state": "CA",
-    "address": "777 Brand Blvd",
-    "postalCode": "91203",
-    "coordinates": "POINT(-118.254708 34.142508)"
+    "country": "India",
+    "city": "Bangalore",
+    "state": "Karnataka",
+    "address": "501, Koramangala 4th Block, Near Forum Mall",
+    "postalCode": "560034",
+    "coordinates": "POINT(77.627117 12.928333)"
   },
   {
     "id": 8,
-    "country": "United States",
-    "city": "Torrance",
-    "state": "CA",
-    "address": "555 Torrance Blvd",
-    "postalCode": "90503",
-    "coordinates": "POINT(-118.352575 33.835849)"
+    "country": "India",
+    "city": "Bangalore",
+    "state": "Karnataka",
+    "address": "A-201, Whitefield, Near ITPL",
+    "postalCode": "560066",
+    "coordinates": "POINT(77.750771 12.969637)"
   },
   {
     "id": 9,
-    "country": "United States",
-    "city": "Miami",
-    "state": "FL",
-    "address": "1234 Ocean Dr",
-    "postalCode": "33139",
-    "coordinates": "POINT(-80.130045 25.782551)"
+    "country": "India",
+    "city": "Bangalore",
+    "state": "Karnataka",
+    "address": "D-302, Indiranagar, 100 Feet Road",
+    "postalCode": "560038",
+    "coordinates": "POINT(77.641064 12.978349)"
   },
   {
     "id": 10,
-    "country": "United States",
-    "city": "Beverly Hills",
-    "state": "CA",
-    "address": "789 Rodeo Dr",
-    "postalCode": "90210",
-    "coordinates": "POINT(-118.400356 34.073620)"
+    "country": "India",
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "address": "B-12, T. Nagar, Near Pondy Bazaar",
+    "postalCode": "600017",
+    "coordinates": "POINT(80.234135 13.041768)"
+  },
+  {
+    "id": 11,
+    "country": "India",
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "address": "A-405, Anna Nagar, Near Shanthi Colony",
+    "postalCode": "600040",
+    "coordinates": "POINT(80.208595 13.085140)"
+  },
+  {
+    "id": 12,
+    "country": "India",
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "address": "C-201, Velachery, Near Phoenix MarketCity",
+    "postalCode": "600042",
+    "coordinates": "POINT(80.218674 12.979304)"
+  },
+  {
+    "id": 13,
+    "country": "India",
+    "city": "Pune",
+    "state": "Maharashtra",
+    "address": "304, Koregaon Park, Near Osho Garden",
+    "postalCode": "411001",
+    "coordinates": "POINT(73.893662 18.538914)"
+  },
+  {
+    "id": 14,
+    "country": "India",
+    "city": "Pune",
+    "state": "Maharashtra",
+    "address": "B-501, Hinjewadi Phase 1, Near Rajiv Gandhi IT Park",
+    "postalCode": "411057",
+    "coordinates": "POINT(73.726959 18.591142)"
+  },
+  {
+    "id": 15,
+    "country": "India",
+    "city": "Pune",
+    "state": "Maharashtra",
+    "address": "A-203, Kothrud, Near Karve Road",
+    "postalCode": "411038",
+    "coordinates": "POINT(73.808991 18.506697)"
+  },
+  {
+    "id": 16,
+    "country": "India",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "address": "Tower A, Banjara Hills, Road No. 12",
+    "postalCode": "500034",
+    "coordinates": "POINT(78.448700 17.416802)"
+  },
+  {
+    "id": 17,
+    "country": "India",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "address": "B-304, HITEC City, Near Cyber Towers",
+    "postalCode": "500081",
+    "coordinates": "POINT(78.383881 17.445792)"
+  },
+  {
+    "id": 18,
+    "country": "India",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "address": "C-201, Jubilee Hills, Near Film Nagar",
+    "postalCode": "500033",
+    "coordinates": "POINT(78.409805 17.431807)"
+  },
+  {
+    "id": 19,
+    "country": "India",
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "address": "A-301, Salt Lake Sector V, Near City Centre",
+    "postalCode": "700091",
+    "coordinates": "POINT(88.424179 22.575925)"
+  },
+  {
+    "id": 20,
+    "country": "India",
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "address": "B-12, Park Street, Near Metro Station",
+    "postalCode": "700016",
+    "coordinates": "POINT(88.366035 22.552539)"
   }
 ]

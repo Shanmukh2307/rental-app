@@ -1,7 +1,7 @@
-import { FiltersState, initialState, setFilters } from "@/state";
+import { FiltersState, initialState, setFilters, toggleFiltersFullOpen } from "@/state";
 import { useAppSelector } from "@/state/redux";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { debounce } from "lodash";
 import { cleanParams, cn, formatEnumString } from "@/lib/utils";
@@ -24,10 +24,15 @@ const FiltersFull = () => {
   const router = useRouter();
   const pathname = usePathname();
   const filters = useAppSelector((state) => state.global.filters);
-  const [localFilters, setLocalFilters] = useState(initialState.filters);
+  const [localFilters, setLocalFilters] = useState(filters);
   const isFiltersFullOpen = useAppSelector(
     (state) => state.global.isFiltersFullOpen
   );
+
+  // Sync localFilters with global filters when they change
+  useEffect(() => {
+    setLocalFilters(filters);
+  }, [filters]);
 
   const updateURL = debounce((newFilters: FiltersState) => {
     const cleanFilters = cleanParams(newFilters);
@@ -46,12 +51,14 @@ const FiltersFull = () => {
   const handleSubmit = () => {
     dispatch(setFilters(localFilters));
     updateURL(localFilters);
+    dispatch(toggleFiltersFullOpen()); // Close the filters panel after applying
   };
 
   const handleReset = () => {
     setLocalFilters(initialState.filters);
     dispatch(setFilters(initialState.filters));
     updateURL(initialState.filters);
+    dispatch(toggleFiltersFullOpen()); // Close the filters panel after resetting
   };
 
   const handleAmenityChange = (amenity: AmenityEnum) => {
@@ -75,13 +82,26 @@ const FiltersFull = () => {
       const data = await response.json();
       if (data.features && data.features.length > 0) {
         const [lng, lat] = data.features[0].center;
+        const locationName = data.features[0].place_name || localFilters.location;
         setLocalFilters((prev) => ({
           ...prev,
-          coordinates: [lng, lat],
+          location: locationName,
+          coordinates: [lng, lat] as [number, number],
+        }));
+      } else {
+        // No results found - don't apply geographic filter
+        setLocalFilters((prev) => ({
+          ...prev,
+          coordinates: [null, null] as [null, null],
         }));
       }
     } catch (err) {
       console.error("Error search location:", err);
+      // On error - don't apply geographic filter
+      setLocalFilters((prev) => ({
+        ...prev,
+        coordinates: [null, null] as [null, null],
+      }));
     }
   };
 
@@ -96,7 +116,7 @@ const FiltersFull = () => {
           <div className="flex items-center">
             <Input
               placeholder="Enter location"
-              value={filters.location}
+              value={localFilters.location}
               onChange={(e) =>
                 setLocalFilters((prev) => ({
                   ...prev,
@@ -118,6 +138,23 @@ const FiltersFull = () => {
         <div>
           <h4 className="font-bold mb-2">Property Type</h4>
           <div className="grid grid-cols-2 gap-4">
+            {/* Any Property Type option */}
+            <div
+              className={cn(
+                "flex flex-col items-center justify-center p-4 border rounded-xl cursor-pointer",
+                localFilters.propertyType === "any"
+                  ? "border-black"
+                  : "border-gray-200"
+              )}
+              onClick={() =>
+                setLocalFilters((prev) => ({
+                  ...prev,
+                  propertyType: "any",
+                }))
+              }
+            >
+              <span className="text-sm">Any Type</span>
+            </div>
             {Object.entries(PropertyTypeIcons).map(([type, Icon]) => (
               <div
                 key={type}
@@ -130,7 +167,7 @@ const FiltersFull = () => {
                 onClick={() =>
                   setLocalFilters((prev) => ({
                     ...prev,
-                    propertyType: type as PropertyTypeEnum,
+                    propertyType: type,
                   }))
                 }
               >
@@ -145,23 +182,25 @@ const FiltersFull = () => {
         <div>
           <h4 className="font-bold mb-2">Price Range (Monthly)</h4>
           <Slider
-            min={0}
-            max={10000}
-            step={100}
+            min={28000}
+            max={85000}
+            step={1000}
             value={[
-              localFilters.priceRange[0] ?? 0,
-              localFilters.priceRange[1] ?? 10000,
+              localFilters.priceRange[0] ?? 28000,
+              localFilters.priceRange[1] ?? 85000,
             ]}
-            onValueChange={(value: any) =>
+            onValueChange={(value: number[]) =>
               setLocalFilters((prev) => ({
                 ...prev,
-                priceRange: value as [number, number],
+                priceRange: value[0] === 28000 && value[1] === 85000 
+                  ? [null, null] 
+                  : [value[0], value[1]] as [number, number],
               }))
             }
           />
           <div className="flex justify-between mt-2">
-            <span>${localFilters.priceRange[0] ?? 0}</span>
-            <span>${localFilters.priceRange[1] ?? 10000}</span>
+            <span>₹{localFilters.priceRange[0] ?? 28000}</span>
+            <span>₹{localFilters.priceRange[1] ?? 85000}</span>
           </div>
         </div>
 
@@ -219,10 +258,12 @@ const FiltersFull = () => {
               localFilters.squareFeet[0] ?? 0,
               localFilters.squareFeet[1] ?? 5000,
             ]}
-            onValueChange={(value) =>
+            onValueChange={(value: number[]) =>
               setLocalFilters((prev) => ({
                 ...prev,
-                squareFeet: value as [number, number],
+                squareFeet: value[0] === 0 && value[1] === 5000 
+                  ? [null, null] 
+                  : [value[0], value[1]] as [number, number],
               }))
             }
             className="[&>.bar]:bg-primary-700"

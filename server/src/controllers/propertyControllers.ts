@@ -81,7 +81,9 @@ export const getProperties = async (
 
     if (amenities && amenities !== "any") {
       const amenitiesArray = (amenities as string).split(",");
-      whereConditions.push(Prisma.sql`p.amenities @> ${amenitiesArray}`);
+      // Cast the text array to Amenity enum array for proper comparison
+      const amenityEnumArray = amenitiesArray.map(a => `'${a}'::"Amenity"`).join(',');
+      whereConditions.push(Prisma.sql`p.amenities @> ARRAY[${Prisma.raw(amenityEnumArray)}]`);
     }
 
     if (availableFrom && availableFrom !== "any") {
@@ -104,7 +106,7 @@ export const getProperties = async (
     if (latitude && longitude) {
       const lat = parseFloat(latitude as string);
       const lng = parseFloat(longitude as string);
-      const radiusInKilometers = 1000;
+      const radiusInKilometers = 50; // More reasonable radius for city searches
       const degrees = radiusInKilometers / 111; // Converts kilometers to degrees
 
       whereConditions.push(

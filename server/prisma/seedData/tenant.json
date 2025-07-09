@@ -2,9 +2,9 @@
   {
     "id": 1,
     "cognitoId": "817b3540-a061-707b-742a-a28391181149",
-    "name": "Carol White",
-    "email": "carol.white@example.com",
-    "phoneNumber": "+1 (555) 555-6666",
+    "name": "Arjun Sharma",
+    "email": "arjun.sharma@gmail.com",
+    "phoneNumber": "+91 98765 43210",
     "properties": {
       "connect": [{ "id": 5 }, { "id": 6 }]
     }
@@ -12,9 +12,9 @@
   {
     "id": 2,
     "cognitoId": "us-east-2:87654321-90ab-cdef-1234-567890abcdef",
-    "name": "Bob Green",
-    "email": "bob.green@example.com",
-    "phoneNumber": "+1 (555) 333-4444",
+    "name": "Priya Singh",
+    "email": "priya.singh@outlook.com",
+    "phoneNumber": "+91 98234 56789",
     "favorites": {
       "connect": [{ "id": 2 }]
     }
@@ -22,9 +22,9 @@
   {
     "id": 3,
     "cognitoId": "us-east-2:98765432-90ab-cdef-1234-567890abcdef",
-    "name": "Alice Brown",
-    "email": "alice.brown@example.com",
-    "phoneNumber": "+1 (555) 111-2222",
+    "name": "Neha Gupta",
+    "email": "neha.gupta@yahoo.in",
+    "phoneNumber": "+91 98765 12345",
     "properties": {
       "connect": []
     },
@@ -35,9 +35,9 @@
   {
     "id": 4,
     "cognitoId": "us-east-2:65432109-90ab-cdef-1234-567890abcdef",
-    "name": "David Lee",
-    "email": "david.lee@example.com",
-    "phoneNumber": "+1 (555) 777-8888",
+    "name": "Vikram Nair",
+    "email": "vikram.nair@techcorp.in",
+    "phoneNumber": "+91 98456 78901",
     "properties": {
       "connect": [{ "id": 4 }]
     },
@@ -48,9 +48,9 @@
   {
     "id": 5,
     "cognitoId": "us-east-2:54321098-90ab-cdef-1234-567890abcdef",
-    "name": "Emma Taylor",
-    "email": "emma.taylor@example.com",
-    "phoneNumber": "+1 (555) 999-0000",
+    "name": "Kavya Reddy",
+    "email": "kavya.reddy@infosys.com",
+    "phoneNumber": "+91 98123 45678",
     "properties": {
       "connect": [{ "id": 2 }, { "id": 9 }]
     },
@@ -61,9 +61,9 @@
   {
     "id": 6,
     "cognitoId": "us-east-2:43210987-90ab-cdef-1234-567890abcdef",
-    "name": "Frank Wilson",
-    "email": "frank.wilson@example.com",
-    "phoneNumber": "+1 (555) 222-3333",
+    "name": "Rohit Khanna",
+    "email": "rohit.khanna@wipro.com",
+    "phoneNumber": "+91 98567 89012",
     "properties": {
       "connect": [{ "id": 10 }]
     }
@@ -71,9 +71,9 @@
   {
     "id": 7,
     "cognitoId": "us-east-2:32109876-90ab-cdef-1234-567890abcdef",
-    "name": "Grace Miller",
-    "email": "grace.miller@example.com",
-    "phoneNumber": "+1 (555) 444-5555",
+    "name": "Ananya Patel",
+    "email": "ananya.patel@tcs.com",
+    "phoneNumber": "+91 98890 12345",
     "properties": {
       "connect": [{ "id": 6 }]
     },
@@ -84,9 +84,9 @@
   {
     "id": 8,
     "cognitoId": "us-east-2:21098765-90ab-cdef-1234-567890abcdef",
-    "name": "Henry Wilson",
-    "email": "henry.wilson@example.com",
-    "phoneNumber": "+1 (555) 444-5555",
+    "name": "Karthik Iyer",
+    "email": "karthik.iyer@accenture.com",
+    "phoneNumber": "+91 98345 67890",
     "properties": {
       "connect": [{ "id": 3 }]
     }
@@ -94,9 +94,9 @@
   {
     "id": 9,
     "cognitoId": "us-east-2:10987654-90ab-cdef-1234-567890abcdef",
-    "name": "Isabella Garcia",
-    "email": "isabella.garcia@example.com",
-    "phoneNumber": "+1 (555) 666-7777",
+    "name": "Shreya Joshi",
+    "email": "shreya.joshi@microsoft.com",
+    "phoneNumber": "+91 98678 90123",
     "properties": {
       "connect": [{ "id": 7 }, { "id": 8 }]
     },
@@ -107,9 +107,9 @@
   {
     "id": 10,
     "cognitoId": "us-east-2:09876543-90ab-cdef-1234-567890abcdef",
-    "name": "Jack Thompson",
-    "email": "jack.thompson@example.com",
-    "phoneNumber": "+1 (555) 888-9999",
+    "name": "Aditya Kumar",
+    "email": "aditya.kumar@amazon.in",
+    "phoneNumber": "+91 98901 23456",
     "properties": {
       "connect": [{ "id": 10 }]
     },
@@ -120,9 +120,9 @@
   {
     "id": 11,
     "cognitoId": "us-east-2:a9876543-90ab-cdef-1234-567890abcdef",
-    "name": "Karen Martinez",
-    "email": "karen.martinez@example.com",
-    "phoneNumber": "+1 (555) 123-4567",
+    "name": "Meera Malhotra",
+    "email": "meera.malhotra@flipkart.com",
+    "phoneNumber": "+91 98012 34567",
     "properties": {
       "connect": [{ "id": 2 }]
     },
@@ -133,9 +133,9 @@
   {
     "id": 12,
     "cognitoId": "us-east-2:b9876543-90ab-cdef-1234-567890abcdef",
-    "name": "Liam Johnson",
-    "email": "liam.johnson@example.com",
-    "phoneNumber": "+1 (555) 987-6543",
+    "name": "Rajesh Yadav",
+    "email": "rajesh.yadav@paytm.com",
+    "phoneNumber": "+91 98123 56789",
     "favorites": {
       "connect": [{ "id": 3 }, { "id": 6 }, { "id": 9 }]
     }
@@ -143,9 +143,9 @@
   {
     "id": 13,
     "cognitoId": "us-east-2:c9876543-90ab-cdef-1234-567890abcdef",
-    "name": "Mia Rodriguez",
-    "email": "mia.rodriguez@example.com",
-    "phoneNumber": "+1 (555) 246-8135",
+    "name": "Divya Agarwal",
+    "email": "divya.agarwal@ola.com",
+    "phoneNumber": "+91 98234 67890",
     "properties": {
       "connect": [{ "id": 4 }]
     }
@@ -153,9 +153,9 @@
   {
     "id": 14,
     "cognitoId": "us-east-2:d9876543-90ab-cdef-1234-567890abcdef",
-    "name": "Noah Kim",
-    "email": "noah.kim@example.com",
-    "phoneNumber": "+1 (555) 369-2580",
+    "name": "Siddharth Menon",
+    "email": "siddharth.menon@zomato.com",
+    "phoneNumber": "+91 98345 78901",
     "favorites": {
       "connect": [{ "id": 1 }, { "id": 10 }]
     }
@@ -163,9 +163,9 @@
   {
     "id": 15,
     "cognitoId": "us-east-2:e9876543-90ab-cdef-1234-567890abcdef",
-    "name": "Olivia Chen",
-    "email": "olivia.chen@example.com",
-    "phoneNumber": "+1 (555) 159-7531",
+    "name": "Riya Bansal",
+    "email": "riya.bansal@swiggy.com",
+    "phoneNumber": "+91 98456 89012",
     "properties": {
       "connect": [{ "id": 5 }]
     },

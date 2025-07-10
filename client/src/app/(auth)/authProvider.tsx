@@ -1,9 +1,13 @@
 import React, { useEffect } from 'react';
 import { Amplify } from 'aws-amplify';
-
 import { Authenticator, Heading, RadioGroupField,Radio, useAuthenticator, View } from '@aws-amplify/ui-react';
-import '@aws-amplify/ui-react/styles.css';
 import {useRouter, usePathname } from 'next/navigation';
+
+// Only import the styles when this component is actually rendered
+// This prevents the CSS from being preloaded on pages that don't need it
+import dynamic from 'next/dynamic';
+// Use the correct path for the authStyles component
+const AuthStyles = dynamic(() => import('@/app/(auth)/authStyles'), { ssr: false });
 
 
 
@@ -153,13 +157,15 @@ const Auth= ({ children }: { children: React.ReactNode }) => {
 
     return (
         <div className="h-full">
-        <Authenticator
-            initialState={pathname.includes('signup') ? 'signUp' : 'signIn'}
-            components={components}
-            formFields={formFields}
-        >
-        {()=><>{children}</>} 
-        </Authenticator>
+            {/* Load the styles only when the Authenticator is rendered */}
+            <AuthStyles />
+            <Authenticator
+                initialState={pathname.includes('signup') ? 'signUp' : 'signIn'}
+                components={components}
+                formFields={formFields}
+            >
+            {()=><>{children}</>} 
+            </Authenticator>
         </div>
     );
 }

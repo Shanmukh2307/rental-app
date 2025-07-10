@@ -1,6 +1,6 @@
 "use client";
 
-import { useGetAuthUserQuery } from "@/state/api";
+import { useGetAuthUserQuery, useGetPropertyQuery } from "@/state/api";
 import { useParams } from "next/navigation";
 import React, { useState } from "react";
 import ImagePreviews from "./ImagePreviews";
@@ -15,11 +15,22 @@ const SingleListing = () => {
   const propertyId = Number(id);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data: authUser } = useGetAuthUserQuery();
+  const { data: property, isLoading: isPropertyLoading } = useGetPropertyQuery(propertyId);
+
+  // Fallback images if property images are not available
+  const fallbackImages = ["/singlelisting-2.jpg", "/singlelisting-3.jpg"];
+  const displayImages = (property?.photoUrls && property.photoUrls.length > 0) 
+    ? property.photoUrls 
+    : fallbackImages;
+
+  if (isPropertyLoading) {
+    return <div className="flex justify-center items-center h-96">Loading property...</div>;
+  }
 
   return (
     <div>
       <ImagePreviews
-        images={["/singlelisting-2.jpg", "/singlelisting-3.jpg"]}
+        images={displayImages}
       />
       <div className="flex flex-col md:flex-row justify-center gap-10 mx-10 md:w-2/3 md:mx-auto mt-16 mb-8">
         <div className="order-2 md:order-1">
@@ -33,13 +44,13 @@ const SingleListing = () => {
         </div>
       </div>
 
-      {/* {authUser && (
+      {authUser && (
         <ApplicationModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           propertyId={propertyId}
         />
-      )} */}
+      )}
     </div>
   );
 };

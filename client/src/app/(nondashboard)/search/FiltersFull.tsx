@@ -35,7 +35,9 @@ const FiltersFull = () => {
   }, [filters]);
 
   const updateURL = debounce((newFilters: FiltersState) => {
+    console.log("FiltersFull - updateURL called with:", newFilters);
     const cleanFilters = cleanParams(newFilters);
+    console.log("FiltersFull - cleanFilters result:", cleanFilters);
     const updatedSearchParams = new URLSearchParams();
 
     Object.entries(cleanFilters).forEach(([key, value]) => {
@@ -45,13 +47,59 @@ const FiltersFull = () => {
       );
     });
 
-    router.push(`${pathname}?${updatedSearchParams.toString()}`);
+    const finalURL = `${pathname}?${updatedSearchParams.toString()}`;
+    console.log("FiltersFull - Final URL:", finalURL);
+    router.push(finalURL);
   });
 
-  const handleSubmit = () => {
-    dispatch(setFilters(localFilters));
-    updateURL(localFilters);
-    dispatch(toggleFiltersFullOpen()); // Close the filters panel after applying
+  const handleSubmit = async () => {
+    let finalFilters = { ...localFilters };
+    
+    // If location is provided but coordinates are not set, geocode first
+    if (localFilters.location && localFilters.location.trim() !== "" && 
+        (!localFilters.coordinates || localFilters.coordinates[0] === null || localFilters.coordinates[1] === null)) {
+      
+      try {
+        const response = await fetch(
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+            localFilters.location
+          )}.json?access_token=${
+            process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
+          }&fuzzyMatch=true`
+        );
+        const data = await response.json();
+        
+        if (data.features && data.features.length > 0) {
+          const [lng, lat] = data.features[0].center;
+          const locationName = data.features[0].place_name || localFilters.location;
+          
+          finalFilters = {
+            ...finalFilters,
+            location: locationName,
+            coordinates: [lng, lat] as [number, number],
+          };
+          
+          // Update local state too
+          setLocalFilters(finalFilters);
+        } else {
+          finalFilters = {
+            ...finalFilters,
+            coordinates: [null, null] as [null, null],
+          };
+        }
+      } catch (err) {
+        console.error("Error geocoding location:", err);
+        finalFilters = {
+          ...finalFilters,
+          coordinates: [null, null] as [null, null],
+        };
+      }
+    }
+    
+    // Apply the final filters (with coordinates if geocoded)
+    dispatch(setFilters(finalFilters));
+    updateURL(finalFilters);
+    dispatch(toggleFiltersFullOpen());
   };
 
   const handleReset = () => {
@@ -80,9 +128,11 @@ const FiltersFull = () => {
         }&fuzzyMatch=true`
       );
       const data = await response.json();
+      
       if (data.features && data.features.length > 0) {
         const [lng, lat] = data.features[0].center;
         const locationName = data.features[0].place_name || localFilters.location;
+        
         setLocalFilters((prev) => ({
           ...prev,
           location: locationName,
@@ -96,7 +146,7 @@ const FiltersFull = () => {
         }));
       }
     } catch (err) {
-      console.error("Error search location:", err);
+      console.error("Error searching location:", err);
       // On error - don't apply geographic filter
       setLocalFilters((prev) => ({
         ...prev,

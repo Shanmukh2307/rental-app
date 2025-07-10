@@ -10,6 +10,9 @@ import { cleanParams } from "@/lib/utils";
 import { setFilters } from "@/state";
 import Map from "./Map";
 import Listings from "./Listings";
+// Import the CSS module to ensure it's used immediately on page load
+import styles from "./search.module.css";
+import SearchPageResourceLoader from "./SearchPageResourceLoader";
 
 const SearchPage = () => {
   const searchParams = useSearchParams();
@@ -17,6 +20,16 @@ const SearchPage = () => {
   const isFiltersFullOpen = useAppSelector(
     (state) => state.global.isFiltersFullOpen
   );
+  
+  // Simple effect to help with CSS loading
+  useEffect(() => {
+    // Add a class that can help with CSS recognition
+    document.documentElement.classList.add('search-page-loaded');
+    
+    return () => {
+      document.documentElement.classList.remove('search-page-loaded');
+    };
+  }, []);
 
   useEffect(() => {
     const initialFilters = Array.from(searchParams.entries()).reduce(
@@ -43,11 +56,12 @@ const SearchPage = () => {
 
   return (
     <div
-      className="w-full mx-auto px-5 flex flex-col"
+      className={`w-full mx-auto px-5 flex flex-col ${styles.searchContainer} search-page-container`}
       style={{
         height: `calc(100vh - ${NAVBAR_HEIGHT}px)`,
       }}
     >
+      <SearchPageResourceLoader />
       <FiltersBar />
       <div className="flex justify-between flex-1 overflow-hidden gap-3 mb-5">
         <div

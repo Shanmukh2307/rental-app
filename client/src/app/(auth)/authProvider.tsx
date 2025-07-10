@@ -11,7 +11,6 @@ const AuthStyles = dynamic(() => import('@/app/(auth)/authStyles'), { ssr: false
 
 
 
-
 Amplify.configure({
     Auth: {
         Cognito: {
@@ -136,12 +135,13 @@ const formFields={
 }
 
 const Auth= ({ children }: { children: React.ReactNode }) => {
-    const {user} = useAuthenticator((context) => [context.user]);
+    const {user, authStatus} = useAuthenticator((context) => [context.user, context.authStatus]);
     const router= useRouter();
     const pathname = usePathname();
 
     const isAuthPage = pathname.match(/^\/(signin|signup)$/);
     const isDashboardPage = pathname.startsWith('/manager')|| pathname.startsWith('/tenant');
+    const isSearchPage = pathname.startsWith('/search');
 
     // Redirect to dashboard if user is authenticated and on auth page
     useEffect(() => {
@@ -151,8 +151,16 @@ const Auth= ({ children }: { children: React.ReactNode }) => {
     }, [user, isAuthPage, router]);
 
     //Allow access to public pages without authentication
-    if( !isAuthPage && !isDashboardPage){
-        return <>{children}</>;
+    if(!isAuthPage && !isDashboardPage) {
+        // For search pages, make sure we don't try to use auth features if not authenticated
+        if (isSearchPage && authStatus !== 'authenticated') {
+            // For search pages, immediately render content without waiting for auth
+            // This allows unauthenticated users to browse properties
+            return <>{children}</>;
+        } else if (!isSearchPage) {
+            // For other public pages, also render content immediately
+            return <>{children}</>;
+        }
     }
 
     return (

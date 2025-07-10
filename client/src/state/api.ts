@@ -37,8 +37,15 @@ export const api = createApi({
     getAuthUser: build.query<User, void>({
       queryFn: async (_, _queryApi, _extraoptions, fetchWithBQ) => {
         try {
+          // Check if there's an active session first
           const session = await fetchAuthSession();
-          const { idToken } = session.tokens ?? {};
+          
+          // If no tokens, user is not logged in - return null without error
+          if (!session.tokens) {
+            return { data: null as any };
+          }
+          
+          const { idToken } = session.tokens;
           const user = await getCurrentUser();
           const userRole = idToken?.payload["custom:role"] as string;
 

@@ -6,6 +6,11 @@ import { Authenticator } from "@aws-amplify/ui-react";
 import Auth from "./(auth)/authProvider";
 
 const Providers=({children}:{children:React.ReactNode}) => {
+  // Determine if we're on an authentication page
+  const isAuthPage = typeof window !== 'undefined' && 
+    (window.location.pathname.includes('/login') || 
+     window.location.pathname.includes('/signup'));
+  
   return (
     <StoreProvider>
       <Authenticator.Provider>

@@ -12,13 +12,17 @@ import React from "react";
 import CardCompact from "@/components/CardCompact";
 
 const Listings = () => {
-  const { data: authUser } = useGetAuthUserQuery();
+  const { data: authUser, isLoading: authLoading } = useGetAuthUserQuery();
+  const isAuthenticated = !!authUser;
+  
+  // Only try to get tenant data if authenticated
   const { data: tenant } = useGetTenantQuery(
     authUser?.cognitoInfo?.userId || "",
     {
-      skip: !authUser?.cognitoInfo?.userId,
+      skip: !isAuthenticated || !authUser?.cognitoInfo?.userId,
     }
   );
+  
   const [addFavorite] = useAddFavoritePropertyMutation();
   const [removeFavorite] = useRemoveFavoritePropertyMutation();
   const viewMode = useAppSelector((state) => state.global.viewMode);
@@ -31,7 +35,12 @@ const Listings = () => {
   } = useGetPropertiesQuery(filters);
 
   const handleFavoriteToggle = async (propertyId: number) => {
-    if (!authUser) return;
+    // If not authenticated, we could redirect to login or show a message
+    if (!isAuthenticated || !authUser) {
+      // Could add a router.push('/signin') here if you want to redirect to login
+      console.log('User must be logged in to favorite properties');
+      return;
+    }
 
     const isFavorite = tenant?.favorites?.some(
       (fav: Property) => fav.id === propertyId
@@ -50,8 +59,9 @@ const Listings = () => {
     }
   };
 
-  if (isLoading) return <>Loading...</>;
-  if (isError || !properties) return <div>Failed to fetch properties</div>;
+  // Show loading state only for properties, not for auth
+  if (isLoading) return <div className="p-4">Loading properties...</div>;
+  if (isError || !properties) return <div className="p-4">Failed to fetch properties</div>;
 
   return (
     <div className="w-full">

@@ -1,0 +1,5 @@
+/* This file ensures CSS preload works correctly */
+.searchContainer {
+  display: flex;
+  flex-direction: column;
+}

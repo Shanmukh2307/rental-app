@@ -9,7 +9,11 @@ import { CITIES, DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from "@/lib/constants";
 import { useDispatch } from "react-redux";
 import { setFilters } from "@/state";
 
+// Set Mapbox access token
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN as string;
+
+// Disable Mapbox telemetry which is causing the ERR_BLOCKED_BY_CLIENT errors
+(mapboxgl as any).config.COLLECT_METRICS = false;
 
 const Map = () => {
   const mapContainerRef = useRef<HTMLDivElement>(null);

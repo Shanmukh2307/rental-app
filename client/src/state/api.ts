@@ -106,10 +106,14 @@ export const api = createApi({
 
         return { url: "properties", params };
       },
+      // Fix potential null destructuring with safe mapping
       providesTags: (result) =>
-        result
+        result && Array.isArray(result)
           ? [
-              ...result.map(({ id }) => ({ type: "Properties" as const, id })),
+              ...result.map((property) => ({ 
+                type: "Properties" as const, 
+                id: property?.id || "unknown" 
+              })),
               { type: "Properties", id: "LIST" },
             ]
           : [{ type: "Properties", id: "LIST" }],
@@ -121,19 +125,33 @@ export const api = createApi({
     }),
 
     getProperty: build.query<Property, number>({
-      query: (id) => `properties/${id}`,
+      query: (id) => {
+        if (!id || isNaN(id)) {
+          throw new Error(`Invalid property ID: ${id}`);
+        }
+        console.log(`Fetching property details for ID: ${id}`);
+        return `properties/${id}`;
+      },
       providesTags: (result, error, id) => [{ type: "PropertyDetails", id }],
-      async onQueryStarted(_, { queryFulfilled }) {
-        await withToast(queryFulfilled, {
-          error: "Failed to load property details.",
-        });
+      transformErrorResponse: (response) => {
+        console.error("Property details error response:", response);
+        return response;
+      },
+      async onQueryStarted(id, { queryFulfilled }) {
+        try {
+          const result = await queryFulfilled;
+          console.log(`Successfully fetched property details for ID ${id}:`, result.data);
+        } catch (error) {
+          console.error(`Error fetching property details for ID ${id}:`, error);
+        }
       },
     }),
 
     // tenant related endpoints
     getTenant: build.query<Tenant, string>({
       query: (cognitoId) => `tenants/${cognitoId}`,
-      providesTags: (result) => [{ type: "Tenants", id: result?.id }],
+      // Fix potential null destructuring by using optional chaining
+      providesTags: (result) => result ? [{ type: "Tenants", id: result.id }] : [{ type: "Tenants", id: "LIST" }],
       async onQueryStarted(_, { queryFulfilled }) {
         await withToast(queryFulfilled, {
           error: "Failed to load tenant profile.",
@@ -143,10 +161,14 @@ export const api = createApi({
 
     getCurrentResidences: build.query<Property[], string>({
       query: (cognitoId) => `tenants/${cognitoId}/current-residences`,
+      // Fix potential null destructuring with safe mapping
       providesTags: (result) =>
-        result
+        result && Array.isArray(result)
           ? [
-              ...result.map(({ id }) => ({ type: "Properties" as const, id })),
+              ...result.map((property) => ({ 
+                type: "Properties" as const, 
+                id: property?.id || "unknown" 
+              })),
               { type: "Properties", id: "LIST" },
             ]
           : [{ type: "Properties", id: "LIST" }],
@@ -166,7 +188,8 @@ export const api = createApi({
         method: "PUT",
         body: updatedTenant,
       }),
-      invalidatesTags: (result) => [{ type: "Tenants", id: result?.id }],
+      // Fix potential null destructuring by using optional chaining and providing fallback
+      invalidatesTags: (result) => result ? [{ type: "Tenants", id: result.id }] : [{ type: "Tenants", id: "LIST" }],
       async onQueryStarted(_, { queryFulfilled }) {
         await withToast(queryFulfilled, {
           success: "Settings updated successfully!",
@@ -183,8 +206,9 @@ export const api = createApi({
         url: `tenants/${cognitoId}/favorites/${propertyId}`,
         method: "POST",
       }),
+      // Fix potential null destructuring by using optional chaining and providing fallback
       invalidatesTags: (result) => [
-        { type: "Tenants", id: result?.id },
+        result ? { type: "Tenants", id: result.id } : { type: "Tenants", id: "LIST" },
         { type: "Properties", id: "LIST" },
       ],
       async onQueryStarted(_, { queryFulfilled }) {
@@ -203,8 +227,9 @@ export const api = createApi({
         url: `tenants/${cognitoId}/favorites/${propertyId}`,
         method: "DELETE",
       }),
+      // Fix potential null destructuring by using optional chaining and providing fallback
       invalidatesTags: (result) => [
-        { type: "Tenants", id: result?.id },
+        result ? { type: "Tenants", id: result.id } : { type: "Tenants", id: "LIST" },
         { type: "Properties", id: "LIST" },
       ],
       async onQueryStarted(_, { queryFulfilled }) {
@@ -217,18 +242,35 @@ export const api = createApi({
 
     // manager related endpoints
     getManagerProperties: build.query<Property[], string>({
-      query: (cognitoId) => `managers/${cognitoId}/properties`,
+      query: (cognitoId) => {
+        if (!cognitoId) {
+          throw new Error("Manager ID is required");
+        }
+        console.log(`Fetching properties for manager: ${cognitoId}`);
+        return `managers/${cognitoId}/properties`;
+      },
+      // Fix potential null destructuring with safe mapping
       providesTags: (result) =>
-        result
+        result && Array.isArray(result)
           ? [
-              ...result.map(({ id }) => ({ type: "Properties" as const, id })),
+              ...result.map((property) => ({ 
+                type: "Properties" as const, 
+                id: property?.id || "unknown" 
+              })),
               { type: "Properties", id: "LIST" },
             ]
           : [{ type: "Properties", id: "LIST" }],
-      async onQueryStarted(_, { queryFulfilled }) {
-        await withToast(queryFulfilled, {
-          error: "Failed to load manager profile.",
-        });
+      transformErrorResponse: (response) => {
+        console.error("Manager properties error response:", response);
+        return response;
+      },
+      async onQueryStarted(cognitoId, { queryFulfilled }) {
+        try {
+          const result = await queryFulfilled;
+          console.log(`Successfully fetched ${result.data.length} properties for manager ${cognitoId}`);
+        } catch (error) {
+          console.error(`Error fetching properties for manager ${cognitoId}:`, error);
+        }
       },
     }),
 
@@ -241,7 +283,8 @@ export const api = createApi({
         method: "PUT",
         body: updatedManager,
       }),
-      invalidatesTags: (result) => [{ type: "Managers", id: result?.id }],
+      // Fix potential null destructuring by using optional chaining and providing fallback
+      invalidatesTags: (result) => result ? [{ type: "Managers", id: result.id }] : [{ type: "Managers", id: "LIST" }],
       async onQueryStarted(_, { queryFulfilled }) {
         await withToast(queryFulfilled, {
           success: "Settings updated successfully!",
@@ -256,9 +299,10 @@ export const api = createApi({
         method: "POST",
         body: newProperty,
       }),
+      // Fix potential null destructuring by using optional chaining and providing fallback
       invalidatesTags: (result) => [
         { type: "Properties", id: "LIST" },
-        { type: "Managers", id: result?.manager?.id },
+        result && result.manager ? { type: "Managers", id: result.manager.id } : { type: "Managers", id: "LIST" },
       ],
       async onQueryStarted(_, { queryFulfilled }) {
         await withToast(queryFulfilled, {
@@ -280,22 +324,48 @@ export const api = createApi({
     }),
 
     getPropertyLeases: build.query<Lease[], number>({
-      query: (propertyId) => `properties/${propertyId}/leases`,
+      query: (propertyId) => {
+        if (!propertyId || isNaN(propertyId)) {
+          throw new Error(`Invalid property ID: ${propertyId}`);
+        }
+        console.log(`Fetching leases for property ID: ${propertyId}`);
+        return `properties/${propertyId}/leases`;
+      },
       providesTags: ["Leases"],
-      async onQueryStarted(_, { queryFulfilled }) {
-        await withToast(queryFulfilled, {
-          error: "Failed to fetch property leases.",
-        });
+      transformErrorResponse: (response) => {
+        console.error("Property leases error response:", response);
+        return response;
+      },
+      async onQueryStarted(propertyId, { queryFulfilled }) {
+        try {
+          const result = await queryFulfilled;
+          console.log(`Successfully fetched ${result.data.length} leases for property ${propertyId}`);
+        } catch (error) {
+          console.error(`Error fetching leases for property ${propertyId}:`, error);
+        }
       },
     }),
 
     getPayments: build.query<Payment[], number>({
-      query: (leaseId) => `leases/${leaseId}/payments`,
+      query: (leaseId) => {
+        if (!leaseId || isNaN(leaseId)) {
+          throw new Error(`Invalid lease ID: ${leaseId}`);
+        }
+        console.log(`Fetching payments for lease ID: ${leaseId}`);
+        return `leases/${leaseId}/payments`;
+      },
       providesTags: ["Payments"],
-      async onQueryStarted(_, { queryFulfilled }) {
-        await withToast(queryFulfilled, {
-          error: "Failed to fetch payment info.",
-        });
+      transformErrorResponse: (response) => {
+        console.error("Payments error response:", response);
+        return response;
+      },
+      async onQueryStarted(leaseId, { queryFulfilled }) {
+        try {
+          const result = await queryFulfilled;
+          console.log(`Successfully fetched ${result.data.length} payments for lease ${leaseId}`);
+        } catch (error) {
+          console.error(`Error fetching payments for lease ${leaseId}:`, error);
+        }
       },
     }),
 

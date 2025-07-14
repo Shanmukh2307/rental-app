@@ -79,33 +79,75 @@ export const updateManager = async (req: Request, res: Response) : Promise<void>
 export const getManagerProperties = async (req: Request, res: Response) : Promise<void> => {
     try{
         const { cognitoId } = req.params;
+        
+        console.log(`Fetching properties for manager with cognitoId: ${cognitoId}`);
+        
+        // Check if manager exists first
+        const managerExists = await prisma.manager.findUnique({
+            where: { cognitoId }
+        });
+        
+        if (!managerExists) {
+            console.log(`Manager with cognitoId ${cognitoId} not found`);
+            res.status(404).json({ 
+                message: `Manager with ID ${cognitoId} not found` 
+            });
+            return;
+        }
+        
         const properties = await prisma.property.findMany({
             where: { managerCognitoId: cognitoId },
             include: {
                 location: true,
             },
         });
+        
+        console.log(`Found ${properties.length} properties for manager ${cognitoId}`);
 
         const propertiesWithFormattedLocation = await Promise.all(
             properties.map(async (property) => {
-                const coordinates : { coordinates : string}[]=
-                await prisma.$queryRaw`SELECT ST_asText(coordinates) as coordinates FROM "Location" WHERE id = ${property.location.id}`;
-                const geoJSON : any = wktToGeoJSON(coordinates[0].coordinates || "");
-                const longitude = geoJSON.coordinates[0];
-                const latitude = geoJSON.coordinates[1];
+                try {
+                    const coordinates : { coordinates : string}[] =
+                    await prisma.$queryRaw`SELECT ST_asText(coordinates) as coordinates FROM "Location" WHERE id = ${property.location.id}`;
+                    
+                    // Handle case where coordinates might be null
+                    if (!coordinates || !coordinates[0] || !coordinates[0].coordinates) {
+                        console.log(`No coordinates found for location id: ${property.location.id}`);
+                        return {
+                            ...property,
+                            location: {
+                                ...property.location,
+                                latitude: null,
+                                longitude: null,
+                            }
+                        };
+                    }
+                    
+                    const geoJSON : any = wktToGeoJSON(coordinates[0].coordinates || "");
+                    const longitude = geoJSON.coordinates[0];
+                    const latitude = geoJSON.coordinates[1];
 
-                const propertyWithCoordinates ={
-                    ...property,
-                    location: {
-                        ...property.location,
-                        coordinates: {
+                    return {
+                        ...property,
+                        location: {
+                            ...property.location,
                             latitude,
                             longitude,
-                        },
-                    },
+                        }
+                    };
+                } catch (error: any) {
+                    console.error(`Error processing coordinates for property ${property.id}:`, error);
+                    // Return the property without coordinates rather than failing
+                    return {
+                        ...property,
+                        location: {
+                            ...property.location,
+                            latitude: null,
+                            longitude: null,
+                        }
+                    };
                 }
-            }
-        )
+            })
         );
        
          res.status(200).json(propertiesWithFormattedLocation);

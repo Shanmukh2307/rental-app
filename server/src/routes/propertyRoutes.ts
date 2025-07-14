@@ -1,5 +1,5 @@
 import express from "express";
-import { getProperties, getProperty, createProperty } from "../controllers/propertyControllers";
+import { getProperties, getProperty, getPropertyLeases, createProperty } from "../controllers/propertyControllers";
 import { authMiddleware } from "../middleware/authMiddleware";
 import multer from "multer";
 
@@ -10,6 +10,7 @@ const router = express.Router();
 
 router.get("/", getProperties);
 router.get("/:id", getProperty);
+router.get("/:id/leases", getPropertyLeases);
 router.post("/", 
     authMiddleware(["manager"]),
     upload.array("photos"),

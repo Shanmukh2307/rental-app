@@ -25,13 +25,14 @@
   {
     "id": 3,
     "applicationDate": "2025-02-01T00:00:00Z",
-    "status": "Denied",
+    "status": "Approved",
     "propertyId": 3,
-    "tenantCognitoId": "817b3540-a061-707b-742a-a28391181149",
+    "tenantCognitoId": "41e3bd8a-7081-70ce-1f33-df355418eee9",
     "name": "Arjun Sharma",
     "email": "arjun.sharma@gmail.com",
     "phoneNumber": "+91 98765 43210",
-    "message": "The Powai apartment with lake view is exactly what I've been looking for. Perfect for IT professionals!"
+    "message": "The Powai apartment with lake view is exactly what I've been looking for. Perfect for IT professionals!",
+    "leaseId": 3
   },
   {
     "id": 4,

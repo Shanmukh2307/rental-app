@@ -80,43 +80,42 @@ export const updateTenant = async (req: Request, res: Response) : Promise<void> 
 };
 
 export const getCurrentResidences = async (req: Request, res: Response) : Promise<void> => {
-    try{
+    try {
         const { cognitoId } = req.params;
-        const properties = await prisma.property.findMany({
-            where: { tenants: { some: { cognitoId } } },
-            include: {
-                location: true,
-            },
+        // Find all leases for this tenant
+        const leases = await prisma.lease.findMany({
+            where: { tenantCognitoId: cognitoId },
+            include: { property: { include: { location: true } } },
         });
 
         const residencesWithFormattedLocation = await Promise.all(
-            properties.map(async (property) => {
-                const coordinates : { coordinates : string}[]=
-                await prisma.$queryRaw`SELECT ST_asText(coordinates) as coordinates FROM "Location" WHERE id = ${property.location.id}`;
-                const geoJSON : any = wktToGeoJSON(coordinates[0].coordinates || "");
+            leases.map(async (lease) => {
+                const property = lease.property;
+                const coordinates: { coordinates: string }[] =
+                    await prisma.$queryRaw`SELECT ST_asText(coordinates) as coordinates FROM "Location" WHERE id = ${property.location.id}`;
+                const geoJSON: any = wktToGeoJSON(coordinates[0].coordinates || "");
                 const longitude = geoJSON.coordinates[0];
                 const latitude = geoJSON.coordinates[1];
 
-                const propertyWithCoordinates ={
+                return {
                     ...property,
                     location: {
                         ...property.location,
-                        coordinates: {
-                            latitude,
-                            longitude,
-                        },
+                        coordinates: { latitude, longitude },
                     },
-                }
-            }
-        )
+                    lease: {
+                        startDate: lease.startDate,
+                        endDate: lease.endDate,
+                        rent: lease.rent,
+                        deposit: lease.deposit,
+                    },
+                };
+            })
         );
-       
-         res.status(200).json(residencesWithFormattedLocation);
-    } 
-    catch (error : any) {
-        res
-        .status(500)
-        .json({ message: "Error retrieving manager properties", error: error.message });
+
+        res.status(200).json(residencesWithFormattedLocation);
+    } catch (error: any) {
+        res.status(500).json({ message: "Error retrieving tenant residences", error: error.message });
     }
 }
 

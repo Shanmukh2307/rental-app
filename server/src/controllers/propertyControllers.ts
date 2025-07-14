@@ -102,10 +102,11 @@ export const getProperties = async (
         }
       }
     }
-
+    let lat: number | null = null;
+    let lng: number | null = null;
     if (latitude && longitude) {
-      const lat = parseFloat(latitude as string);
-      const lng = parseFloat(longitude as string);
+       lat = parseFloat(latitude as string);
+       lng = parseFloat(longitude as string);
       const radiusInKilometers = 50; // More reasonable radius for city searches
       const degrees = radiusInKilometers / 111; // Converts kilometers to degrees
 
@@ -119,29 +120,43 @@ export const getProperties = async (
     }
 
     const completeQuery = Prisma.sql`
-      SELECT 
-        p.*,
-        json_build_object(
-          'id', l.id,
-          'address', l.address,
-          'city', l.city,
-          'state', l.state,
-          'country', l.country,
-          'postalCode', l."postalCode",
-          'coordinates', json_build_object(
-            'longitude', ST_X(l."coordinates"::geometry),
-            'latitude', ST_Y(l."coordinates"::geometry)
-          )
-        ) as location
-      FROM "Property" p
-      JOIN "Location" l ON p."locationId" = l.id
-      ${
-        whereConditions.length > 0
-          ? Prisma.sql`WHERE ${Prisma.join(whereConditions, " AND ")}`
-          : Prisma.empty
-      }
-    `;
-
+  SELECT 
+    p.*,
+    json_build_object(
+      'id', l.id,
+      'address', l.address,
+      'city', l.city,
+      'state', l.state,
+      'country', l.country,
+      'postalCode', l."postalCode",
+      'coordinates', json_build_object(
+        'longitude', ST_X(l."coordinates"::geometry),
+        'latitude', ST_Y(l."coordinates"::geometry)
+      )
+    ) as location
+    ${
+      lat !== null && lng !== null
+        ? Prisma.sql`,
+          ST_Distance(
+            l.coordinates::geometry,
+            ST_SetSRID(ST_MakePoint(${lng}, ${lat}), 4326)
+          ) as distance
+        `
+        : Prisma.empty
+    }
+  FROM "Property" p
+  JOIN "Location" l ON p."locationId" = l.id
+  ${
+    whereConditions.length > 0
+      ? Prisma.sql`WHERE ${Prisma.join(whereConditions, " AND ")}`
+      : Prisma.empty
+  }
+  ${
+    lat !== null && lng !== null
+      ? Prisma.sql`ORDER BY distance ASC`
+      : Prisma.empty
+  }
+`;
     const properties = await prisma.$queryRaw(completeQuery);
 
     res.json(properties);
@@ -158,14 +173,31 @@ export const getProperty = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
+    
+    // Validate ID is a number
+    const propertyId = Number(id);
+    if (isNaN(propertyId)) {
+      console.error(`Invalid property ID: ${id}`);
+      res.status(400).json({ message: `Invalid property ID: ${id}` });
+      return;
+    }
+    
+    console.log(`Fetching property with ID: ${propertyId}`);
+    
     const property = await prisma.property.findUnique({
-      where: { id: Number(id) },
+      where: { id: propertyId },
       include: {
         location: true,
       },
     });
 
-    if (property) {
+    if (!property) {
+      console.log(`Property with ID ${propertyId} not found`);
+      res.status(404).json({ message: `Property with ID ${propertyId} not found` });
+      return;
+    }
+
+    try {
       const coordinates: { coordinates: string }[] =
         await prisma.$queryRaw`SELECT ST_asText(coordinates) as coordinates from "Location" where id = ${property.location.id}`;
 
@@ -184,8 +216,22 @@ export const getProperty = async (
         },
       };
       res.json(propertyWithCoordinates);
+    } catch (error) {
+      console.error(`Error processing coordinates for property ${propertyId}:`, error);
+      // Return the property without coordinates rather than failing
+      res.json({
+        ...property,
+        location: {
+          ...property.location,
+          coordinates: {
+            longitude: null,
+            latitude: null,
+          },
+        },
+      });
     }
   } catch (err: any) {
+    console.error(`Error retrieving property ${req.params.id}:`, err);
     res
       .status(500)
       .json({ message: `Error retrieving property: ${err.message}` });
@@ -291,5 +337,54 @@ export const createProperty = async (
     res
       .status(500)
       .json({ message: `Error creating property: ${err.message}` });
+  }
+};
+
+export const getPropertyLeases = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    
+    // Validate ID is a number
+    const propertyId = Number(id);
+    if (isNaN(propertyId)) {
+      console.error(`Invalid property ID: ${id}`);
+      res.status(400).json({ message: `Invalid property ID: ${id}` });
+      return;
+    }
+    
+    console.log(`Fetching leases for property with ID: ${propertyId}`);
+    
+    // First check if the property exists
+    const propertyExists = await prisma.property.findUnique({
+      where: { id: propertyId }
+    });
+    
+    if (!propertyExists) {
+      console.log(`Property with ID ${propertyId} not found`);
+      res.status(404).json({ 
+        message: `Property with ID ${propertyId} not found` 
+      });
+      return;
+    }
+    
+    // Get leases for the property with tenant information
+    const leases = await prisma.lease.findMany({
+      where: { propertyId },
+      include: {
+        tenant: true,
+      }
+    });
+    
+    console.log(`Found ${leases.length} leases for property ${propertyId}`);
+    
+    res.json(leases);
+  } catch (error: any) {
+    console.error(`Error retrieving leases for property ${req.params.id}:`, error);
+    res.status(500).json({ 
+      message: `Error retrieving leases for property: ${error.message}` 
+    });
   }
 };

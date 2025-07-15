@@ -82,15 +82,30 @@ export const updateTenant = async (req: Request, res: Response) : Promise<void> 
 export const getCurrentResidences = async (req: Request, res: Response) : Promise<void> => {
     try {
         const { cognitoId } = req.params;
-        // Find all leases for this tenant
-        const leases = await prisma.lease.findMany({
-            where: { tenantCognitoId: cognitoId },
-            include: { property: { include: { location: true } } },
+        
+        // Find only approved applications with active leases for this tenant
+        const approvedApplications = await prisma.application.findMany({
+            where: { 
+                tenantCognitoId: cognitoId,
+                status: "Approved",
+                leaseId: { not: null } // Only applications that have a lease
+            },
+            include: { 
+                lease: true,
+                property: { include: { location: true } } 
+            },
+        });
+
+        // Filter for currently active leases (current date is between start and end dates)
+        const currentDate = new Date();
+        const activeResidences = approvedApplications.filter(app => {
+            if (!app.lease) return false;
+            return app.lease.startDate <= currentDate && app.lease.endDate >= currentDate;
         });
 
         const residencesWithFormattedLocation = await Promise.all(
-            leases.map(async (lease) => {
-                const property = lease.property;
+            activeResidences.map(async (app) => {
+                const property = app.property;
                 const coordinates: { coordinates: string }[] =
                     await prisma.$queryRaw`SELECT ST_asText(coordinates) as coordinates FROM "Location" WHERE id = ${property.location.id}`;
                 const geoJSON: any = wktToGeoJSON(coordinates[0].coordinates || "");
@@ -104,10 +119,15 @@ export const getCurrentResidences = async (req: Request, res: Response) : Promis
                         coordinates: { latitude, longitude },
                     },
                     lease: {
-                        startDate: lease.startDate,
-                        endDate: lease.endDate,
-                        rent: lease.rent,
-                        deposit: lease.deposit,
+                        startDate: app.lease!.startDate,
+                        endDate: app.lease!.endDate,
+                        rent: app.lease!.rent,
+                        deposit: app.lease!.deposit,
+                    },
+                    application: {
+                        id: app.id,
+                        applicationDate: app.applicationDate,
+                        status: app.status,
                     },
                 };
             })

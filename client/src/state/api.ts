@@ -124,6 +124,21 @@ export const api = createApi({
       },
     }),
 
+    // New endpoint to get all properties for city markers (no filters)
+    getAllPropertiesForCities: build.query<Property[], void>({
+      query: () => "properties",
+      providesTags: (result) =>
+        result && Array.isArray(result)
+          ? [
+              ...result.map((property) => ({ 
+                type: "Properties" as const, 
+                id: property?.id || "unknown" 
+              })),
+              { type: "Properties", id: "LIST" },
+            ]
+          : [{ type: "Properties", id: "LIST" }],
+    }),
+
     getProperty: build.query<Property, number>({
       query: (id) => {
         if (!id || isNaN(id)) {
@@ -446,4 +461,5 @@ export const {
   useGetApplicationsQuery,
   useUpdateApplicationStatusMutation,
   useCreateApplicationMutation,
+  useGetAllPropertiesForCitiesQuery,
 } = api;

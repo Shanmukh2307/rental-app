@@ -8,7 +8,7 @@ import FiltersBar from "./FiltersBar";
 import FiltersFull from "./FiltersFull";
 import { cleanParams } from "@/lib/utils";
 import { setFilters } from "@/state";
-import Map from "./Map";
+import SearchMap from "./Map";
 import Listings from "./Listings";
 // Import the CSS module to ensure it's used immediately on page load
 import styles from "./search.module.css";
@@ -73,7 +73,7 @@ const SearchPage = () => {
         >
           <FiltersFull />
         </div>
-        <Map />
+        <SearchMap />
         <div className="basis-4/12 overflow-y-auto">
           <Listings />
         </div>

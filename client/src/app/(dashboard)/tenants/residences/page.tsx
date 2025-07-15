@@ -50,7 +50,7 @@ const Residences = () => {
   const favorites = tenant?.favorites || [];
   
   // Extract favorite property IDs from the favorites array (which contains Property objects)
-  const favoriteIds = favorites.map(fav => fav?.id).filter(Boolean);
+  const favoriteIds = favorites.map((fav: any) => fav?.id).filter(Boolean);
 
   return (
     <div className="dashboard-container">

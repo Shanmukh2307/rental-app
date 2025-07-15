@@ -112,7 +112,7 @@ const PropertyTenants = () => {
 
         <div className="bg-red-50 border border-red-200 rounded p-4 mt-4">
           <h2 className="text-lg font-semibold text-red-700 mb-2">Invalid Property ID</h2>
-          <p className="text-red-600">The property ID "{id}" is not valid. Please select a valid property.</p>
+          <p className="text-red-600">The property ID &quot;{id}&quot; is not valid. Please select a valid property.</p>
         </div>
       </div>
     );

@@ -164,7 +164,7 @@ const SearchMap = () => {
         mapRef.current = null;
       }
     };
-  }, [isLoading, isLoadingCities, isError, properties, filters.coordinates, cities]);
+  }, [isLoading, isLoadingCities, isError, properties, filters.coordinates, cities, dispatch]);
 
   if (isLoading || isLoadingCities) return <>Loading...</>;
   if (isError || !properties) return <div>Failed to fetch properties</div>;

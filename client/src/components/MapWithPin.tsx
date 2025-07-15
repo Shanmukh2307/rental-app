@@ -147,7 +147,7 @@ export default function MapWithPin({ value, onChange, className }: MapWithPinPro
         mapRef.current = null;
       }
     };
-  }, []);
+  }, [locationData.coordinates, onChange]);
 
   // Handle address search
   const handleAddressSearch = async () => {

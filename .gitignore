@@ -24,7 +24,7 @@ client/.next/
 node_modules
 
 # Documentation and presentation files (not for repository)
-Authentication_Interview_Presentation.md
+Interview_Presentation.md
 Authentication_Interview_Presentation.pdf
 Authentication_Interview_Presentation.docx
 *.pdf

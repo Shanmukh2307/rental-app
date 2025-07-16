@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { Amplify } from 'aws-amplify';
 import { Authenticator, Heading, RadioGroupField,Radio, useAuthenticator, View } from '@aws-amplify/ui-react';
 import {useRouter, usePathname } from 'next/navigation';
+import { useGetAuthUserQuery } from '@/state/api';
 
 // Only import the styles when this component is actually rendered
 // This prevents the CSS from being preloaded on pages that don't need it
@@ -139,10 +140,18 @@ const Auth= ({ children }: { children: React.ReactNode }) => {
     const {user, authStatus} = useAuthenticator((context) => [context.user, context.authStatus]);
     const router= useRouter();
     const pathname = usePathname();
+    
 
     const isAuthPage = pathname.match(/^\/(signin|signup)$/);
     const isDashboardPage = pathname.startsWith('/manager')|| pathname.startsWith('/tenant');
     const isSearchPage = pathname.startsWith('/search');
+    const { refetch } = useGetAuthUserQuery();
+
+    useEffect(() => {
+        if (authStatus === 'authenticated') {
+            refetch();
+        }
+    }, [authStatus, refetch]);
 
     // Redirect to dashboard if user is authenticated and on auth page
     useEffect(() => {

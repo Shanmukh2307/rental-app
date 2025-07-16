@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect } from 'react';
 import { Amplify } from 'aws-amplify';
 import { Authenticator, Heading, RadioGroupField,Radio, useAuthenticator, View } from '@aws-amplify/ui-react';

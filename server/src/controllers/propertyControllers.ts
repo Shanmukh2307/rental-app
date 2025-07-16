@@ -260,28 +260,28 @@ export const createProperty = async (
     console.log("Property data:", propertyData);
     console.log("Files count:", files.length);
 
-    // // Handle photo uploads
-    // let photoUrls: string[] = [];
-    // if (files && files.length > 0) {
-    //   const uploadedUrls = await Promise.all(
-    //     files.map(async (file) => {
-    //       const uploadParams = {
-    //         Bucket: process.env.S3_BUCKET_NAME!,
-    //         Key: `properties/${Date.now()}-${file.originalname}`,
-    //         Body: file.buffer,
-    //         ContentType: file.mimetype,
-    //       };
+    // Handle photo uploads
+    let photoUrls: string[] = [];
+    if (files && files.length > 0) {
+      const uploadedUrls = await Promise.all(
+        files.map(async (file) => {
+          const uploadParams = {
+            Bucket: process.env.S3_BUCKET_NAME!,
+            Key: `properties/${Date.now()}-${file.originalname}`,
+            Body: file.buffer,
+            ContentType: file.mimetype,
+          };
 
-    //       const uploadResult = await new Upload({
-    //         client: s3Client,
-    //         params: uploadParams,
-    //       }).done();
+          const uploadResult = await new Upload({
+            client: s3Client,
+            params: uploadParams,
+          }).done();
 
-    //       return uploadResult.Location;
-    //     })
-    //   );
-    //   photoUrls = uploadedUrls.filter((url): url is string => url !== undefined);
-    // }
+          return uploadResult.Location;
+        })
+      );
+      photoUrls = uploadedUrls.filter((url): url is string => url !== undefined);
+    }
 
     // Use coordinates from frontend if provided, otherwise fallback to geocoding
     let longitude = 0;
@@ -360,7 +360,7 @@ export const createProperty = async (
         pricePerMonth: parseFloat(propertyData.pricePerMonth),
         securityDeposit: parseFloat(propertyData.securityDeposit),
         applicationFee: parseFloat(propertyData.applicationFee),
-       // photoUrls,
+        photoUrls,
         amenities: amenities as any,
         highlights: highlights as any,
         isPetsAllowed: propertyData.isPetsAllowed === "true",
